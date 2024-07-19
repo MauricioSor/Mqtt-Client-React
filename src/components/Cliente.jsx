@@ -6,9 +6,8 @@ const Cliente = ({ }) => {
     const [mensaje, setMensaje] = useState("");
     const [topico, setTopico] = useState("");
     const [client, setClient] = useState(null);
-
+    const [conexion, setConexion] = useState("");
     useEffect(() => {
-        // Crear la conexión MQTT solo una vez
         const newClient = mqtt.connect("mqtt://test.mosquitto.org:8080");
         setClient(newClient);
 
@@ -31,16 +30,14 @@ const Cliente = ({ }) => {
         if (client) {
             client.subscribe(topico, (err) => {
                 if (!err) {
-                    console.log(`Suscrito al tópico ${topico}`);
+                    setConexion(`Suscrito al tópico ${topico}`);
                 } else {
-                    console.log(`Error al suscribirse: ${err}`);
+                    setConexion(`Error al suscribirse: ${err}`);
                 }
             });
         }
     };
-    useEffect(() => {
-        console.log(mensaje,topico)
-    }, [mensaje,topico])
+
     return (
         <Container className='d-flex flex-column justify-content-center '>
             <Container className='d-flex justify-content-center'>
@@ -52,9 +49,16 @@ const Cliente = ({ }) => {
                 <Button variant="danger" onClick={conectar} className='ms-1'>Suscribir</Button>
             </Container>
             <Row className='border rounded bg-dark' style={{ with: "50%", height: "500px" }}>
-                <h2>Esperando mensajes...</h2>
+                {
+                    conexion!==""?
+                    (<>
+                        <h2 className='fs-2 text-center'>{conexion}</h2>
+                        <h2>Esperando mensajes nuevos...</h2>
+                    </>
+                    ):<></>
+                }
                 <Container className='d-flex flex-column'>
-                    <h5 className='fs-5'>{mensaje}</h5>
+                    <h5 className='fs-5 text-primary'>{mensaje}</h5>
                 </Container>
             </Row>
         </Container>
