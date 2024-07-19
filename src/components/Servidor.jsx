@@ -8,7 +8,7 @@ const Servidor = () => {
     const [client, setClient] = useState(null);
 
     useEffect(() => {
-        const newClient = mqtt.connect("ws://test.mosquitto.org:8080");
+        const newClient = mqtt.connect("ws://test.mosquitto.org:8081");
         setClient(newClient);
         newClient.on("connect", () => {
             console.log("Conectado al broker MQTT");

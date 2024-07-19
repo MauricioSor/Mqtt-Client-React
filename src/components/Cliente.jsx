@@ -8,7 +8,7 @@ const Cliente = ({ }) => {
     const [client, setClient] = useState(null);
     const [conexion, setConexion] = useState("");
     useEffect(() => {
-        const newClient = mqtt.connect("mqtt://test.mosquitto.org:8080");
+        const newClient = mqtt.connect("mqtt://test.mosquitto.org:8081");
         setClient(newClient);
 
         newClient.on("connect", () => {
