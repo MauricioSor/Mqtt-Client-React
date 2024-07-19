@@ -1,18 +1,36 @@
+import mqtt from 'mqtt';
 import React, { useEffect, useState } from 'react';
 import { Button, Container,Row,Col } from 'react-bootstrap';
 
 const Servidor = () => {
-    const [topico, setTopico] = useState()
-    const [mensaje, setMensaje] = useState()
+    const [topico, setTopico] = useState('');
+    const [mensaje, setMensaje] = useState('');
+    const [client, setClient] = useState(null);
 
-    const EnviarMensaje=()=>{
-    EnviarMensaje(topico,mensaje).then((resp)=>{
+    useEffect(() => {
+        const newClient = mqtt.connect("ws://test.mosquitto.org:8080");
+        setClient(newClient);
+        newClient.on("connect", () => {
+            console.log("Conectado al broker MQTT");
+        });
+        return () => {
+            if (newClient) {
+                newClient.end();
+            }
+        };
+    }, []);
 
-    })
-    }
-    useEffect(()=>{
-console.log(topico ,mensaje);
-    },[topico,mensaje])
+    const EnviarMensaje = () => {
+        if (client && topico && mensaje) {
+            client.publish(topico, mensaje, (err) => {
+                if (err) {
+                    console.log(`Error al enviar mensaje: ${err}`);
+                } else {
+                    console.log(`Mensaje enviado: ${mensaje} al tópico: ${topico}`);
+                }
+            });
+        }
+    };
     return (
         <Container className='d-flex flex-column justify-content-center border rounded mt-5 bg-primary'>
             <Container className=''>
@@ -30,7 +48,7 @@ console.log(topico ,mensaje);
             onChange={(e)=>setMensaje(e.target.value)} 
             />
             </Col>
-            <Button variant="dark">Enviar</Button>
+            <Button variant="dark" onClick={EnviarMensaje}>Enviar</Button>
             </Row>
         </Container>
     );
